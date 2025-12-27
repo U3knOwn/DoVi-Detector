@@ -522,6 +522,132 @@ HTML_TEMPLATE = '''
             font-size: 0.85em;
             font-family: monospace;
         }
+        
+        /* Mobile Responsive Styles */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            header {
+                padding: 15px 10px;
+                margin-bottom: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .subtitle {
+                font-size: 0.9em;
+            }
+            
+            .controls {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            .button-group {
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            #scanButton, #scanFileButton {
+                width: 100%;
+                padding: 15px 20px;
+                font-size: 1.1em;
+            }
+            
+            #fileSelect {
+                width: 100%;
+                min-width: 100%;
+                max-width: 100%;
+                font-size: 1em;
+            }
+            
+            .stats {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+            
+            /* Make table scrollable horizontally on mobile */
+            table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            thead, tbody, tr {
+                display: table;
+                width: 100%;
+                table-layout: fixed;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+                font-size: 0.85em;
+            }
+            
+            th {
+                font-size: 0.75em;
+            }
+            
+            .profile-badge, .el-badge {
+                font-size: 0.8em;
+                padding: 4px 8px;
+            }
+            
+            .resolution {
+                font-size: 0.9em;
+            }
+            
+            .rpu-info {
+                max-width: 150px;
+                font-size: 0.75em;
+            }
+            
+            .empty-state {
+                padding: 40px 15px;
+            }
+            
+            .empty-state h2 {
+                font-size: 1.2em;
+            }
+            
+            .message {
+                font-size: 0.9em;
+                padding: 8px 15px;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .subtitle {
+                font-size: 0.8em;
+            }
+            
+            #scanButton, #scanFileButton {
+                font-size: 1em;
+                padding: 12px 15px;
+            }
+            
+            th, td {
+                padding: 8px 5px;
+                font-size: 0.75em;
+            }
+            
+            .rpu-info {
+                max-width: 100px;
+            }
+        }
     </style>
 </head>
 <body>
