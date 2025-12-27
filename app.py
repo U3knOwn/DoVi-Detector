@@ -17,6 +17,11 @@ MEDIA_PATH = os.environ.get('MEDIA_PATH', '/media')
 DATA_DIR = '/app/data'
 DB_FILE = os.path.join(DATA_DIR, 'scanned_files.json')
 
+# Scanner configuration constants (can be overridden by environment variables)
+RPU_INFO_MAX_LENGTH = int(os.environ.get('RPU_INFO_MAX_LENGTH', '500'))
+FILE_WRITE_DELAY = int(os.environ.get('FILE_WRITE_DELAY', '5'))
+AUTO_REFRESH_INTERVAL = int(os.environ.get('AUTO_REFRESH_INTERVAL', '60'))
+
 # Supported video formats
 SUPPORTED_FORMATS = {'.mkv', '.mp4', '.m4v', '.ts', '.hevc'}
 
@@ -188,7 +193,7 @@ def scan_video_file(file_path):
             'profile': profile,
             'el_type': el_type if el_type else 'Unknown',
             'resolution': resolution,
-            'rpu_info': info_output[:500] if info_output else ''  # Store first 500 chars
+            'rpu_info': info_output[:RPU_INFO_MAX_LENGTH] if info_output else ''
         }
         
         with scan_lock:
@@ -239,8 +244,8 @@ class MediaFileHandler(FileSystemEventHandler):
         
         if ext in SUPPORTED_FORMATS:
             print(f"New file detected: {file_path}")
-            # Wait a bit to ensure file is fully written
-            time.sleep(5)
+            # Wait to ensure file is fully written
+            time.sleep(FILE_WRITE_DELAY)
             try:
                 scan_video_file(file_path)
             except Exception as e:
@@ -597,10 +602,10 @@ HTML_TEMPLATE = '''
             });
         }
         
-        // Auto-refresh every 60 seconds to show new automatically scanned files
+        // Auto-refresh every configured interval to show new automatically scanned files
         setTimeout(() => {
             location.reload();
-        }, 60000);
+        }, {{ auto_refresh_interval }} * 1000);
     </script>
 </body>
 </html>
@@ -615,7 +620,8 @@ def index():
     
     return render_template_string(HTML_TEMPLATE, 
                                  files=files_list,
-                                 file_count=len(files_list))
+                                 file_count=len(files_list),
+                                 auto_refresh_interval=AUTO_REFRESH_INTERVAL)
 
 @app.route('/scan', methods=['POST'])
 def manual_scan():
