@@ -15,6 +15,7 @@ app = Flask(__name__)
 # Configuration
 MEDIA_PATH = os.environ.get('MEDIA_PATH', '/media')
 DATA_DIR = '/app/data'
+TEMP_DIR = '/app/temp'
 DB_FILE = os.path.join(DATA_DIR, 'scanned_files.json')
 
 # Scanner configuration constants (can be overridden by environment variables)
@@ -30,8 +31,28 @@ scanned_files = {}
 scanned_paths = set()
 scan_lock = threading.Lock()
 
-# Ensure data directory exists
+# Ensure directories exist
 os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(TEMP_DIR, exist_ok=True)
+
+def cleanup_temp_directory():
+    """Clean up temporary directory to prevent accumulation of orphaned files"""
+    try:
+        import shutil
+        if os.path.exists(TEMP_DIR):
+            # Remove all contents but keep the directory
+            for item in os.listdir(TEMP_DIR):
+                item_path = os.path.join(TEMP_DIR, item)
+                try:
+                    if os.path.isfile(item_path) or os.path.islink(item_path):
+                        os.unlink(item_path)
+                    elif os.path.isdir(item_path):
+                        shutil.rmtree(item_path)
+                except Exception as e:
+                    print(f"Error deleting {item_path}: {e}")
+            print(f"Cleaned up temp directory: {TEMP_DIR}")
+    except Exception as e:
+        print(f"Error cleaning temp directory: {e}")
 
 def load_database():
     """Load previously scanned files from database"""
@@ -156,7 +177,8 @@ def scan_video_file(file_path):
         print(f"Already scanned: {file_path}")
         return None
     
-    with tempfile.TemporaryDirectory() as tmpdir:
+    # Use dedicated temp directory in Docker container
+    with tempfile.TemporaryDirectory(dir=TEMP_DIR) as tmpdir:
         hevc_file = os.path.join(tmpdir, 'stream.hevc')
         rpu_file = os.path.join(tmpdir, 'RPU.bin')
         
@@ -204,6 +226,7 @@ def scan_video_file(file_path):
         
         print(f"Successfully scanned: {file_path} - Profile {profile} ({el_type})")
         return file_info
+    # Temporary files (HEVC stream, RPU) are automatically cleaned up here
 
 def scan_directory(directory):
     """Scan directory for video files"""
@@ -985,6 +1008,9 @@ def main():
     """Main application entry point"""
     print("Starting Dolby Vision Profile 7 Scanner")
     
+    # Clean up any orphaned temporary files from previous runs
+    cleanup_temp_directory()
+    
     # Load existing database
     load_database()
     
@@ -1001,6 +1027,8 @@ def main():
         print("Shutting down...")
         observer.stop()
         observer.join()
+        # Clean up temp directory on shutdown
+        cleanup_temp_directory()
 
 if __name__ == '__main__':
     main()
