@@ -169,11 +169,11 @@ def cleanup_database():
     removed_count = 0
     paths_to_remove = []
     
-    # Check file existence outside the lock to avoid blocking
+    # Get list of paths to check (with lock)
     with scan_lock:
         paths_to_check = list(scanned_files.keys())
     
-    # Check which files no longer exist (outside lock)
+    # Check which files no longer exist (outside lock to avoid blocking)
     for file_path in paths_to_check:
         if not os.path.exists(file_path):
             paths_to_remove.append(file_path)
