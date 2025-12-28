@@ -817,18 +817,20 @@ def manual_scan():
         new_files = scan_directory(MEDIA_PATH)
         
         # Scan each new file
+        scanned_new_count = 0
         for file_path in new_files:
             try:
-                scan_video_file(file_path)
+                result = scan_video_file(file_path)
+                if result.get('success', False):
+                    scanned_new_count += 1
             except Exception as e:
                 print(f"Error scanning {file_path}: {e}")
         
         final_count = len(scanned_files)
-        new_count = final_count - initial_count
         
         return jsonify({
             'success': True,
-            'new_files': new_count,
+            'new_files': scanned_new_count,
             'removed_files': removed_count,
             'total_files': final_count
         })
