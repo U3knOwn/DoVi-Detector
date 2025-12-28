@@ -162,6 +162,37 @@ def save_database():
     except Exception as e:
         print(f"Error saving database: {e}")
 
+def cleanup_database():
+    """Remove entries from database for files that no longer exist"""
+    global scanned_files, scanned_paths
+    
+    removed_count = 0
+    paths_to_remove = []
+    
+    # Get list of paths to check (with lock)
+    with scan_lock:
+        paths_to_check = list(scanned_files.keys())
+    
+    # Check which files no longer exist (outside lock to avoid blocking)
+    for file_path in paths_to_check:
+        if not os.path.exists(file_path):
+            paths_to_remove.append(file_path)
+    
+    # Remove non-existent files from database (with lock)
+    if paths_to_remove:
+        with scan_lock:
+            for file_path in paths_to_remove:
+                if file_path in scanned_files:  # Check if still exists in case another thread already removed it
+                    del scanned_files[file_path]
+                    scanned_paths.discard(file_path)
+                    removed_count += 1
+                    print(f"✗ Removed from database (file not found): {file_path}")
+            
+            if removed_count > 0:
+                save_database()
+    
+    return removed_count
+
 def extract_dovi_metadata(video_file):
     """
     Extract Dolby Vision metadata using ffmpeg pipe + dovi_tool JSON output
@@ -738,6 +769,23 @@ class MediaFileHandler(FileSystemEventHandler):
                 scan_video_file(file_path)
             except Exception as e:
                 print(f"Error scanning new file {file_path}: {e}")
+    
+    def on_deleted(self, event):
+        """Handle file deletion - remove from database"""
+        if event.is_directory:
+            return
+        
+        file_path = event.src_path
+        ext = os.path.splitext(file_path)[1].lower()
+        
+        if ext in SUPPORTED_FORMATS:
+            print(f"File deletion detected: {file_path}")
+            with scan_lock:
+                if file_path in scanned_files:
+                    del scanned_files[file_path]
+                    scanned_paths.discard(file_path)
+                    save_database()
+                    print(f"✗ Removed from database: {file_path}")
 
 def start_file_observer():
     """Start watchdog observer for automatic file scanning"""
@@ -770,22 +818,28 @@ def manual_scan():
     try:
         initial_count = len(scanned_files)
         
+        # Clean up database for non-existent files
+        removed_count = cleanup_database()
+        
         # Scan for new files
         new_files = scan_directory(MEDIA_PATH)
         
         # Scan each new file
+        scanned_new_count = 0
         for file_path in new_files:
             try:
-                scan_video_file(file_path)
+                result = scan_video_file(file_path)
+                if result and result.get('success', False):
+                    scanned_new_count += 1
             except Exception as e:
                 print(f"Error scanning {file_path}: {e}")
         
         final_count = len(scanned_files)
-        new_count = final_count - initial_count
         
         return jsonify({
             'success': True,
-            'new_files': new_count,
+            'new_files': scanned_new_count,
+            'removed_files': removed_count,
             'total_files': final_count
         })
     except Exception as e:
@@ -901,6 +955,11 @@ def main():
     
     # Load existing database
     load_database()
+    
+    # Clean up database for non-existent files
+    removed_count = cleanup_database()
+    if removed_count > 0:
+        print(f"Cleaned up {removed_count} entries for non-existent files")
     
     # Start file observer in background
     observer = start_file_observer()
