@@ -279,8 +279,8 @@ def get_tmdb_poster_by_id(tmdb_id, media_type='movie'):
         
         if response.status_code not in [200, 404]:
             print(
-                f"TMDB API error for ID {tmdb_id}: HTTP {
-                    response.status_code}")
+                f"TMDB API error for ID {tmdb_id}: HTTP "
+                f"{response.status_code}")
     except requests.exceptions.Timeout:
         print(f"TMDB API timeout for ID {tmdb_id}")
     except requests.exceptions.RequestException as e:
@@ -353,8 +353,8 @@ def search_tmdb_poster(movie_name, media_type='movie'):
         
         if response.status_code not in [200, 404]:
             print(
-                f"TMDB API search error for '{movie_name}': HTTP {
-                    response.status_code}")
+                f"TMDB API search error for '{movie_name}': HTTP "
+                f"{response.status_code}")
     except requests.exceptions.Timeout:
         print(f"TMDB API timeout searching for '{movie_name}'")
     except requests.exceptions.RequestException as e:
@@ -511,8 +511,8 @@ def migrate_poster_urls_to_cache():
             # Check if poster URL is a TMDB URL (not cached)
             if poster_url and is_valid_tmdb_url(poster_url):
                 print(
-                    f"  [MIGRATION] Caching poster for: {
-                        file_info.get('filename')}")
+                    f"  [MIGRATION] Caching poster for: "
+                    f"{file_info.get('filename')}")
                 cached_path = get_cached_poster_path(tmdb_id, poster_url)
                 if cached_path and cached_path.startswith('/poster/'):
                     file_info['poster_url'] = cached_path
@@ -618,8 +618,8 @@ def extract_dovi_metadata(video_file):
         # Check if RPU file was created and has content
         if not os.path.exists(rpu_path):
             print(
-                f"  [DV] No RPU file created for {
-                    os.path.basename(video_file)}")
+                f"  [DV] No RPU file created for "
+                f"{os.path.basename(video_file)}")
             return None
 
         if os.path.getsize(rpu_path) == 0:
@@ -636,8 +636,8 @@ def extract_dovi_metadata(video_file):
         if dovi_info.returncode != 0:
             stderr = dovi_info.stderr.decode('utf-8', errors='ignore')
             print(
-                f"  [DV] dovi_tool info failed for {
-                    os.path.basename(video_file)}: {stderr}")
+                f"  [DV] dovi_tool info failed for "
+                f"{os.path.basename(video_file)}: {stderr}")
             return None
 
         # Parse output
@@ -647,8 +647,8 @@ def extract_dovi_metadata(video_file):
         lines = output.strip().split('\n')
         if len(lines) < 2:
             print(
-                f"  [DV] Unexpected dovi_tool output format for {
-                    os.path.basename(video_file)}")
+                f"  [DV] Unexpected dovi_tool output format for "
+                f"{os.path.basename(video_file)}")
             return None
 
         json_data = '\n'.join(lines[1:])
@@ -658,8 +658,8 @@ def extract_dovi_metadata(video_file):
         el_type = metadata.get('el_type', '').upper()
 
         print(
-            f"  [DV] Dolby Vision detected: Profile {profile}, EL Type: {
-                el_type or 'None'}")
+            f"  [DV] Dolby Vision detected: Profile {profile}, EL Type: "
+            f"{el_type or 'None'}")
 
         return {
             'profile': profile,
@@ -674,8 +674,8 @@ def extract_dovi_metadata(video_file):
         return None
     except Exception as e:
         print(
-            f"  [DV] Dolby Vision extraction error for {
-                os.path.basename(video_file)}: {e}")
+            f"  [DV] Dolby Vision extraction error for "
+            f"{os.path.basename(video_file)}: {e}")
         return None
     finally:
         # Clean up temp file
@@ -844,8 +844,8 @@ def detect_hdr_format(video_file):
 
     except Exception as e:
         print(
-            f"[HDR] Error detecting HDR format for {
-                os.path.basename(video_file)}: {e}")
+            f"[HDR] Error detecting HDR format for "
+            f"{os.path.basename(video_file)}: {e}")
         return {
             'format': 'Unknown',
             'detail': 'Unknown',
