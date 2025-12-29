@@ -425,3 +425,18 @@ tbody tr:hover {
         padding: 4px 8px;
     }
 }
+
+/* Accessibility: Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .poster-img {
+        transition: none;
+    }
+    
+    .poster-img:hover {
+        transform: none;
+    }
+    
+    .spinner {
+        animation: none;
+    }
+}

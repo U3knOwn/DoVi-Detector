@@ -33,7 +33,7 @@ YEAR_PATTERN = re.compile(r'\b(19|20)\d{2}\b')
 RESOLUTION_PATTERN = re.compile(r'\b(480|720|1080|2160)[pi]\b', re.IGNORECASE)
 CODEC_PATTERN = re.compile(r'\b(x264|x265|h264|h265|hevc)\b', re.IGNORECASE)
 SOURCE_PATTERN = re.compile(r'\b(BluRay|BRRip|WEBRip|WEB-DL|HDRip|DVDRip)\b', re.IGNORECASE)
-HDR_PATTERN = re.compile(r'\b(DV|HDR10\+?|HLG|SDR|Dolby[.\s]?Vision)\b', re.IGNORECASE)
+HDR_PATTERN = re.compile(r'\b(DV|HDR10\+?|HLG|SDR|Dolby[\.\s]?Vision)\b', re.IGNORECASE)
 BRACKET_PATTERN = re.compile(r'[\[\(].*?[\]\)]')
 SEPARATOR_PATTERN = re.compile(r'[._\-]')
 WHITESPACE_PATTERN = re.compile(r'\s+')
@@ -194,7 +194,7 @@ def get_tmdb_poster_by_id(tmdb_id, media_type='movie'):
         return None
     
     # Validate tmdb_id is numeric
-    if not tmdb_id or not str(tmdb_id).isdigit():
+    if not tmdb_id or not isinstance(tmdb_id, (str, int)) or not str(tmdb_id).isdigit():
         print(f"Invalid TMDB ID: {tmdb_id}")
         return None
     
