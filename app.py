@@ -8,8 +8,9 @@ import threading
 import time
 import urllib.request
 import re
+import hashlib
 from pathlib import Path
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_file
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -307,6 +308,11 @@ def download_and_cache_poster(poster_url, cache_filename):
     if not poster_url:
         return None
     
+    # Validate URL is from TMDB to prevent SSRF attacks
+    if not poster_url.startswith('https://image.tmdb.org/'):
+        print(f"  [CACHE] Invalid poster URL (not from TMDB): {poster_url}")
+        return poster_url
+    
     cache_path = os.path.join(POSTER_CACHE_DIR, cache_filename)
     
     # Check if already cached
@@ -343,8 +349,7 @@ def get_cached_poster_path(tmdb_id, poster_url):
     if tmdb_id:
         cache_filename = f"tmdb_{tmdb_id}.jpg"
     else:
-        # Extract filename from URL
-        import hashlib
+        # Extract filename from URL using hash
         url_hash = hashlib.md5(poster_url.encode()).hexdigest()
         cache_filename = f"poster_{url_hash}.jpg"
     
@@ -1195,9 +1200,25 @@ def update_assets():
 def serve_poster(filename):
     """Serve cached poster images"""
     try:
+        # Validate filename to prevent path traversal attacks
+        # Only allow alphanumeric, underscore, hyphen, and .jpg extension
+        if not re.match(r'^[a-zA-Z0-9_-]+\.jpg$', filename):
+            print(f"Invalid poster filename: {filename}")
+            return "Invalid filename", 400
+        
+        # Prevent directory traversal
+        if '..' in filename or '/' in filename or '\\' in filename:
+            print(f"Path traversal attempt detected: {filename}")
+            return "Invalid filename", 400
+        
         poster_path = os.path.join(POSTER_CACHE_DIR, filename)
+        
+        # Verify the resolved path is still within POSTER_CACHE_DIR
+        if not os.path.abspath(poster_path).startswith(os.path.abspath(POSTER_CACHE_DIR)):
+            print(f"Path traversal attempt detected: {filename}")
+            return "Invalid filename", 400
+        
         if os.path.exists(poster_path):
-            from flask import send_file
             return send_file(poster_path, mimetype='image/jpeg')
         else:
             return "Poster not found", 404
