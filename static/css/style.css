@@ -640,3 +640,40 @@ tbody tr:hover {
         animation: none;
     }
 }
+
+/* Language Switcher */
+.language-switcher {
+    display: flex;
+    align-items: center;
+}
+
+.lang-btn {
+    background: rgba(78, 204, 163, 0.2);
+    border: 2px solid #4ecca3;
+    color: #4ecca3;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    min-width: 50px;
+}
+
+.lang-btn:hover {
+    background: rgba(78, 204, 163, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(78, 204, 163, 0.3);
+}
+
+.lang-btn:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .lang-btn {
+        padding: 6px 12px;
+        font-size: 0.85em;
+        min-width: 45px;
+    }
+}

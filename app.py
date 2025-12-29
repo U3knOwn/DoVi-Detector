@@ -57,6 +57,8 @@ GITHUB_FILES = {
     'templates/index.html': os.path.join(TEMPLATES_DIR, 'index.html'),
     'static/css/style.css': os.path.join(CSS_DIR, 'style.css'),
     'static/js/main.js': os.path.join(JS_DIR, 'main.js'),
+    'app/data/en.json': os.path.join(DATA_DIR, 'en.json'),
+    'app/data/de.json': os.path.join(DATA_DIR, 'de.json'),
 }
 
 app = Flask(__name__,
@@ -1382,6 +1384,41 @@ def serve_poster(filename):
     except Exception as e:
         print(f"Error serving poster {filename}: {e}")
         return "Error serving poster", 500
+
+
+@app.route('/lang/<lang>')
+def get_language(lang):
+    """Serve language files (en.json or de.json)"""
+    try:
+        # Validate language parameter
+        if lang not in ['en', 'de']:
+            return jsonify({
+                'success': False,
+                'error': 'Invalid language'
+            }), 400
+        
+        # Try to load from app/data first (development)
+        lang_file = os.path.join('app/data', f'{lang}.json')
+        if not os.path.exists(lang_file):
+            # Try Docker path
+            lang_file = os.path.join(DATA_DIR, f'{lang}.json')
+        
+        if not os.path.exists(lang_file):
+            return jsonify({
+                'success': False,
+                'error': 'Language file not found'
+            }), 404
+        
+        with open(lang_file, 'r', encoding='utf-8') as f:
+            translations = json.load(f)
+        
+        return jsonify(translations)
+    except Exception as e:
+        print(f"Error loading language {lang}: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 
 def main():

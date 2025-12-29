@@ -9,19 +9,26 @@
 <body>
     <div class="container">
         <header>
-            <h1>🎬 DoVi Detector</h1>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1 data-i18n="title">🎬 DoVi Detector</h1>
+                <div class="language-switcher">
+                    <button id="langBtn" class="lang-btn" onclick="toggleLanguage()" aria-label="Switch language">
+                        <span id="currentLang">DE</span>
+                    </button>
+                </div>
+            </div>
         </header>
         
         <div class="controls">
             <div class="stats">
-                Medien: <strong id="fileCount">{{ file_count }}</strong>
+                <span data-i18n="stats.media">Medien</span>: <strong id="fileCount">{{ file_count }}</strong>
             </div>
             <div class="button-group">
                 <div class="loading" id="loadingIndicator">
                     <div class="spinner"></div>
-                    <span>Scanne...</span>
+                    <span data-i18n="loading.scanning">Scanne...</span>
                 </div>
-                <button id="scanButton" onclick="startManualScan()">
+                <button id="scanButton" onclick="startManualScan()" data-i18n="buttons.scanAll">
                     🔍 Alle Medien scannen
                 </button>
             </div>
@@ -31,9 +38,9 @@
             <!-- Linke Seite:  Datei-Scan -->
             <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                 <select id="fileSelect">
-                    <option value="">-- Datei auswählen --</option>
+                    <option value="" data-i18n="select.fileSelect">-- Datei auswählen --</option>
                 </select>
-                <button id="scanFileButton" class="hidden" onclick="scanSelectedFile()" disabled>
+                <button id="scanFileButton" class="hidden" onclick="scanSelectedFile()" disabled data-i18n="buttons.scanFile">
                     ▶️ Datei scannen
                 </button>
             </div>
@@ -41,8 +48,8 @@
             <!-- Rechte Seite:  Sortierung -->
             <div style="display: flex; gap: 10px; align-items: center;">
                 <select id="sortSelect" aria-label="Sortierung auswählen">
-                    <option value="filename">Nach Dateiname</option>
-                    <option value="profile">Nach Medienformat</option>
+                    <option value="filename" data-i18n="select.sortByFilename">Nach Dateiname</option>
+                    <option value="profile" data-i18n="select.sortByProfile">Nach Medienformat</option>
                 </select>
             </div>
         </div>
@@ -53,10 +60,10 @@
         <table id="mediaTable">
             <thead>
                 <tr>
-                    <th>Poster / Dateiname</th>
-                    <th>HDR Format</th>
-                    <th>Auflösung</th>
-                    <th>Audiocodec</th>
+                    <th data-i18n="table.posterFilename">Poster / Dateiname</th>
+                    <th data-i18n="table.hdrFormat">HDR Format</th>
+                    <th data-i18n="table.resolution">Auflösung</th>
+                    <th data-i18n="table.audioCodec">Audiocodec</th>
                 </tr>
             </thead>
             <tbody>
@@ -102,8 +109,8 @@
         </table>
         {% else %}
         <div class="empty-state">
-            <h2>Keine Medien gefunden</h2>
-            <p>Lege Videodateien in den Ordner <code>media/</code>, um sie automatisch scannen zu lassen.</p>
+            <h2 data-i18n="empty.title">Keine Medien gefunden</h2>
+            <p data-i18n-html="empty.description">Lege Videodateien in den Ordner <code>media/</code>, um sie automatisch scannen zu lassen.</p>
         </div>
         {% endif %}
     </div>
