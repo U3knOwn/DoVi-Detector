@@ -42,6 +42,12 @@ function applyTranslations() {
         if (translations[key]) el.innerHTML = translations[key];
     });
     
+    // Placeholder attributes
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (translations[key]) el.placeholder = translations[key];
+    });
+    
     // Data labels
     document.querySelectorAll('[data-label-i18n]').forEach(el => {
         const key = el.getAttribute('data-label-i18n');
@@ -234,6 +240,46 @@ function scanSelectedFile() {
    Neue Sortier-Logik (client-side)
    ------------------------------- */
 
+// Real-time search function
+function searchMedia() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('#mediaTable tbody tr');
+    
+    rows.forEach(row => {
+        // Get searchable content from specific cells only
+        const posterCell = row.querySelector('td:nth-child(1)');
+        const hdrCell = row.querySelector('td:nth-child(2)');
+        const resolutionCell = row.querySelector('td:nth-child(3)');
+        const audioCell = row.querySelector('td:nth-child(4)');
+        
+        // Build searchable text from relevant content
+        let searchableText = '';
+        
+        // From poster cell: get title or filename
+        if (posterCell) {
+            const posterTitle = posterCell.querySelector('.poster-title');
+            const filenameFallback = posterCell.querySelector('.filename-fallback');
+            if (posterTitle) {
+                searchableText += posterTitle.textContent + ' ';
+            } else if (filenameFallback) {
+                searchableText += filenameFallback.textContent + ' ';
+            } else {
+                // Fallback to title attribute
+                const title = posterCell.getAttribute('title');
+                if (title) searchableText += title + ' ';
+            }
+        }
+        
+        // From other cells: get text content
+        if (hdrCell) searchableText += hdrCell.textContent + ' ';
+        if (resolutionCell) searchableText += resolutionCell.textContent + ' ';
+        if (audioCell) searchableText += audioCell.textContent + ' ';
+        
+        // Check if search term is in the searchable text
+        row.style.display = searchableText.toLowerCase().includes(searchTerm) ? '' : 'none';
+    });
+}
+
 function getProfileRank(hdrFormat, hdrDetail, elType) {
     // Normalisiere Strings
     const f = (hdrFormat || '').toLowerCase();
@@ -363,6 +409,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('dovi_sort_mode', mode);
                 applySort(mode);
             });
+        }
+        
+        // Listener für Suchleiste
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', searchMedia);
         }
     });
 });
