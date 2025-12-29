@@ -295,6 +295,87 @@ tbody tr:hover {
     margin-bottom: 10px;
 }
 
+/* -----------------------------
+   Verbesserte Styles für Dropdowns
+   ----------------------------- */
+.select-enhanced {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Allgemeines Select‑Styling (für #fileSelect und #sortSelect) */
+#fileSelect,
+#sortSelect {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #1f2937; /* dunkel */
+    color: #e6eef6;
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 8px 38px 8px 12px;
+    font-size: 0.95rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(2,6,23,0.45);
+    transition: all 160ms ease;
+    cursor: pointer;
+    min-height: 40px;
+    line-height: 1;
+}
+
+/* Platzierung / Größeanpassung in der control‑Leiste */
+.controls select#fileSelect {
+    max-width: 420px;
+    width: min(48vw, 420px);
+}
+
+.controls select#sortSelect {
+    width: 160px;
+}
+
+#fileSelect,
+#sortSelect {
+    background-image:
+        linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.02)),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M6 9l6 6 6-6' fill='none' stroke='%23e6eef6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 12px) center;
+    background-size: 16px 16px;
+}
+
+/* Hover / Fokus Effekte */
+#fileSelect:hover,
+#sortSelect:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(2,6,23,0.55);
+}
+
+#fileSelect:focus,
+#sortSelect:focus {
+    outline: none;
+    border-color: rgba(99,102,241,0.9); /* violett Akzent */
+    box-shadow: 0 0 0 4px rgba(99,102,241,0.08);
+}
+
+/* Disabled Zustand */
+#fileSelect:disabled,
+#sortSelect:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Kleinere Bildschirme: responsive Breiten */
+@media screen and (max-width: 640px) {
+    #fileSelect {
+        width: 100%;
+    }
+    #sortSelect {
+        width: 140px;
+    }
+}
+
 /* Mobile responsive styles for screens under 768px */
 @media screen and (max-width: 768px) {
     body {

@@ -37,13 +37,20 @@
                 <button id="scanFileButton" onclick="scanSelectedFile()" disabled>
                     ▶️ Ausgewählte Datei scannen
                 </button>
+
+                <!-- Neuer Dropdown: Sortierungsauswahl -->
+                <label for="sortSelect" style="color: #a0a0a0; margin-left: 12px;">Sortierung:</label>
+                <select id="sortSelect" aria-label="Sortierung auswählen">
+                    <option value="filename">Dateiname</option>
+                    <option value="profile">Profile</option>
+                </select>
             </div>
         </div>
         
         <div id="message" class="message"></div>
         
         {% if files %}
-        <table>
+        <table id="mediaTable">
             <thead>
                 <tr>
                     <th>Poster / Dateiname</th>
@@ -54,7 +61,8 @@
             </thead>
             <tbody>
                 {% for file in files %}
-                <tr>
+                {# Wir fügen data-Attribute hinzu, damit das JS die Sortierung nachvollziehen kann #}
+                <tr data-hdr-format="{{ file.hdr_format }}" data-hdr-detail="{{ file.hdr_detail }}" data-el-type="{{ file.el_type or '' }}">
                     <td data-label="Poster / Dateiname" title="{{ file.filename }}">
                         {% if file.poster_url %}
                         <div class="poster-container">
@@ -87,16 +95,12 @@
         </table>
         {% else %}
         <div class="empty-state">
-            <h2>No media files found</h2>
-            <p>Add media files to the /media directory or click "Scan unscanned media"</p>
+            <h2>Keine Medien gefunden</h2>
+            <p>Lege Videodateien in den Ordner <code>media/</code>, um sie automatisch scannen zu lassen.</p>
         </div>
         {% endif %}
     </div>
-    
-    <script>
-        // Pass AUTO_REFRESH_INTERVAL from Flask to JavaScript
-        window.AUTO_REFRESH_INTERVAL = {{ auto_refresh_interval }};
-    </script>
+
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

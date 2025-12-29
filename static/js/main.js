@@ -1,3 +1,6 @@
+// Bestehende Funktionen (startManualScan, loadFileList, scanSelectedFile) bleiben erhalten.
+// Ich erweitere das Script um Sortier-Logik und Initialisierung.
+
 function startManualScan() {
     const button = document.getElementById('scanButton');
     const loading = document.getElementById('loadingIndicator');
@@ -64,6 +67,12 @@ function loadFileList() {
                     }
                     select.appendChild(option);
                 });
+
+                // enable scan for selected file when choosing
+                select.addEventListener('change', function() {
+                    const scanBtn = document.getElementById('scanFileButton');
+                    scanBtn.disabled = !this.value;
+                });
             }
         })
         .catch(error => {
@@ -124,19 +133,140 @@ function scanSelectedFile() {
         button.disabled = false;
         message.className = 'message';
         message.style.display = 'block';
-        message.textContent = '✗ Fehler beim Scannen: ' + error;
+        message.textContent = '✗ Fehler beim Scannen der Datei: ' + error;
     });
 }
 
-// Enable/disable scan file button based on selection
-document.getElementById('fileSelect').addEventListener('change', function() {
-    document.getElementById('scanFileButton').disabled = !this.value;
+/* -------------------------------
+   Neue Sortier-Logik (client-side)
+   ------------------------------- */
+
+function getProfileRank(hdrFormat, hdrDetail, elType) {
+    // Normalisiere Strings
+    const f = (hdrFormat || '').toLowerCase();
+    const d = (hdrDetail || '').toLowerCase();
+    const e = (elType || '').toLowerCase();
+
+    // 0: Profile 7 FEL
+    if ((d.includes('profile 7') || d.includes('prof 7') || d.includes('p7') || d.includes('profile7') || f.includes('dolby vision') || f.includes('dolby')) && e.includes('fel')) {
+        return 0;
+    }
+    // 1: Profile 7 MEL
+    if ((d.includes('profile 7') || d.includes('prof 7') || d.includes('p7') || d.includes('profile7') || f.includes('dolby vision') || f.includes('dolby')) && e.includes('mel')) {
+        return 1;
+    }
+    // 2: Profile 8
+    if (d.includes('profile 8') || d.includes('profile8') || d.includes('p8') || f.includes('profile 8') || f.includes('p8') ) {
+        return 2;
+    }
+    // 3: Profile 5
+    if (d.includes('profile 5') || d.includes('profile5') || d.includes('p5') ) {
+        return 3;
+    }
+    // 4: HDR10+
+    if (f.includes('hdr10+') || d.includes('hdr10+') || f.includes('hdr10plus') || d.includes('hdr10plus')) {
+        return 4;
+    }
+    // 5: HDR (HDR10 or HLG)
+    if (f.includes('hdr10') || d.includes('hdr10') || f.includes('hlg') || d.includes('hlg') || f.includes('smpte2084') || d.includes('smpte2084')) {
+        return 5;
+    }
+    // 6: SDR
+    if (f.includes('sdr') || d.includes('sdr')) {
+        return 6;
+    }
+    // 7: fallback / unknown
+    return 7;
+}
+
+function getFilenameFromRow(row) {
+    // Versuche mehrere Orte: title-Attribut, .poster-title, .filename-fallback
+    const td = row.querySelector('td[data-label="Poster / Dateiname"]');
+    if (!td) return '';
+    // title attribute on td
+    if (td.getAttribute('title')) return td.getAttribute('title').trim();
+    const posterTitle = td.querySelector('.poster-title');
+    if (posterTitle) return posterTitle.textContent.trim();
+    const fallback = td.querySelector('.filename-fallback');
+    if (fallback) return fallback.textContent.trim();
+    return td.textContent.trim();
+}
+
+function sortTableByProfile() {
+    const table = document.getElementById('mediaTable');
+    if (!table) return;
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+    rows.sort((a, b) => {
+        const aFmt = a.getAttribute('data-hdr-format') || '';
+        const aDet = a.getAttribute('data-hdr-detail') || '';
+        const aEl  = a.getAttribute('data-el-type') || '';
+
+        const bFmt = b.getAttribute('data-hdr-format') || '';
+        const bDet = b.getAttribute('data-hdr-detail') || '';
+        const bEl  = b.getAttribute('data-el-type') || '';
+
+        const aRank = getProfileRank(aFmt, aDet, aEl);
+        const bRank = getProfileRank(bFmt, bDet, bEl);
+
+        if (aRank !== bRank) return aRank - bRank;
+
+        // Wenn gleiche Priorität, sekundär nach Dateiname sortieren
+        const aName = getFilenameFromRow(a).toLowerCase();
+        const bName = getFilenameFromRow(b).toLowerCase();
+        if (aName < bName) return -1;
+        if (aName > bName) return 1;
+        return 0;
+    });
+
+    // Reihenfolge im DOM aktualisieren
+    rows.forEach(r => tbody.appendChild(r));
+}
+
+function sortTableByFilename() {
+    const table = document.getElementById('mediaTable');
+    if (!table) return;
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+    rows.sort((a, b) => {
+        const aName = getFilenameFromRow(a).toLowerCase();
+        const bName = getFilenameFromRow(b).toLowerCase();
+        if (aName < bName) return -1;
+        if (aName > bName) return 1;
+        return 0;
+    });
+
+    rows.forEach(r => tbody.appendChild(r));
+}
+
+function applySort(mode) {
+    if (!mode) mode = localStorage.getItem('dovi_sort_mode') || 'filename';
+    const select = document.getElementById('sortSelect');
+    if (select) select.value = mode;
+
+    if (mode === 'profile') {
+        sortTableByProfile();
+    } else {
+        sortTableByFilename();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Lade Dateiliste für Scan-Dropdown
+    loadFileList();
+
+    // Initiale Sortierung anwenden
+    applySort();
+
+    // Listener für Sortenauswahl
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            const mode = this.value || 'filename';
+            localStorage.setItem('dovi_sort_mode', mode);
+            applySort(mode);
+        });
+    }
 });
-
-// Load file list on page load
-loadFileList();
-
-// Auto-refresh every configured interval to show new automatically scanned files
-setTimeout(() => {
-    location.reload();
-}, window.AUTO_REFRESH_INTERVAL * 1000);
