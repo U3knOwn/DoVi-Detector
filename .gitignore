@@ -41,5 +41,8 @@ Thumbs.db
 # Project specific
 media/
 data/
+# But include language files
+!app/data/
+!app/data/*.json
 *.hevc
 *.bin

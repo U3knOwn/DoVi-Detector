@@ -1,0 +1,39 @@
+{
+  "title": "DoVi Detector",
+  "ariaLabels": {
+    "switchLanguage": "Sprache wechseln"
+  },
+  "stats": {
+    "media": "Medien"
+  },
+  "buttons": {
+    "scanAll": "🔍 Alle Medien scannen",
+    "scanFile": "▶️ Datei scannen"
+  },
+  "loading": {
+    "scanning": "Scanne..."
+  },
+  "select": {
+    "fileSelect": "-- Datei auswählen --",
+    "sortByFilename": "Nach Dateiname",
+    "sortByProfile": "Nach Medienformat"
+  },
+  "table": {
+    "posterFilename": "Poster / Dateiname",
+    "hdrFormat": "HDR Format",
+    "resolution": "Auflösung",
+    "audioCodec": "Audiocodec"
+  },
+  "empty": {
+    "title": "Keine Medien gefunden",
+    "description": "Lege Videodateien in den Ordner <code>media/</code>, um sie automatisch scannen zu lassen."
+  },
+  "messages": {
+    "scanComplete": "✓ Scan abgeschlossen! {count} neue Datei(en) gefunden.",
+    "noNewFiles": "ℹ Keine neuen Dateien gefunden.",
+    "scanError": "✗ Fehler beim Scannen: {error}",
+    "fileScanSuccess": "✓ {message}",
+    "fileScanInfo": "ℹ {message}",
+    "fileScanError": "✗ Fehler beim Scannen der Datei: {error}"
+  }
+}
