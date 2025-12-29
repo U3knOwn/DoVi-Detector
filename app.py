@@ -82,11 +82,8 @@ os.makedirs(POSTER_CACHE_DIR, exist_ok=True)
 def copy_bundled_static_files():
     """Copy bundled static files from image to data directory if missing"""
     # Bundled files location (copied during Docker build)
-    bundled_files = {
-        '/app/templates/index.html': os.path.join(TEMPLATES_DIR, 'index.html'),
-        '/app/static/css/style.css': os.path.join(CSS_DIR, 'style.css'),
-        '/app/static/js/main.js': os.path.join(JS_DIR, 'main.js'),
-    }
+    # Derive mapping from GITHUB_FILES to avoid duplication
+    bundled_files = {f'/app/{github_path}': local_path for github_path, local_path in GITHUB_FILES.items()}
     
     copied_count = 0
     for bundled_path, target_path in bundled_files.items():
