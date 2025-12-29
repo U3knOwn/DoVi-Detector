@@ -10,6 +10,7 @@ import urllib.request
 import re
 import hashlib
 from pathlib import Path
+from urllib.parse import urlparse
 from flask import Flask, render_template, jsonify, request, send_file
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -303,13 +304,34 @@ def get_tmdb_poster(filename):
     return None, None
 
 
+def is_valid_tmdb_url(url):
+    """Validate URL is from TMDB to prevent SSRF attacks"""
+    if not url:
+        return False
+    
+    try:
+        parsed = urlparse(url)
+        # Check scheme is https
+        if parsed.scheme != 'https':
+            return False
+        # Check hostname is exactly image.tmdb.org (not a subdomain or similar domain)
+        if parsed.netloc != 'image.tmdb.org':
+            return False
+        # Check path starts with /t/p/
+        if not parsed.path.startswith('/t/p/'):
+            return False
+        return True
+    except Exception:
+        return False
+
+
 def download_and_cache_poster(poster_url, cache_filename):
     """Download poster image and cache it locally"""
     if not poster_url:
         return None
     
     # Validate URL is from TMDB to prevent SSRF attacks
-    if not poster_url.startswith('https://image.tmdb.org/'):
+    if not is_valid_tmdb_url(poster_url):
         print(f"  [CACHE] Invalid poster URL (not from TMDB): {poster_url}")
         return poster_url
     
@@ -385,7 +407,7 @@ def migrate_poster_urls_to_cache():
             tmdb_id = file_info.get('tmdb_id')
             
             # Check if poster URL is a TMDB URL (not cached)
-            if poster_url and poster_url.startswith('https://image.tmdb.org'):
+            if poster_url and is_valid_tmdb_url(poster_url):
                 print(f"  [MIGRATION] Caching poster for: {file_info.get('filename')}")
                 cached_path = get_cached_poster_path(tmdb_id, poster_url)
                 if cached_path and cached_path.startswith('/poster/'):
