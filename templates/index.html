@@ -80,11 +80,19 @@
                     <td data-label-i18n="table_header_hdr">
                         {% if file.hdr_format == 'Dolby Vision' and file.el_type %}
                         <span class="hdr-badge hdr-dolby-vision el-{{ file.el_type.lower() }}">
-                            {{ file.hdr_detail }} ({{ file.el_type }})
+                            {% if not file.hdr_detail or file.hdr_detail == 'Unknown' %}
+                                <span data-i18n="unknown"></span>{% if file.el_type %} ({{ file.el_type }}){% endif %}
+                            {% else %}
+                                {{ file.hdr_detail }}{% if file.el_type %} ({{ file.el_type }}){% endif %}
+                            {% endif %}
                         </span>
                         {% else %}
                         <span class="hdr-badge hdr-{{ file.hdr_format.lower().replace(' ', '-').replace('+', 'plus') }}">
-                            {{ file.hdr_detail }}
+                            {% if not file.hdr_detail or file.hdr_detail == 'Unknown' %}
+                                <span data-i18n="unknown"></span>
+                            {% else %}
+                                {{ file.hdr_detail }}
+                            {% endif %}
                         </span>
                         {% if file.el_type %}
                         <span class="el-badge el-{{ file.el_type.lower() }}">
@@ -131,7 +139,11 @@
                             {% set audio_class = 'lossless' %}
                         {% endif %}
                         <span class="audio-badge audio-{{ audio_class }}">
-                            {{ file.audio_codec }}
+                            {% if not file.audio_codec or file.audio_codec == 'Unknown' %}
+                                <span data-i18n="unknown"></span>
+                            {% else %}
+                                {{ file.audio_codec }}
+                            {% endif %}
                         </span>
                     </td>
                 </tr>
