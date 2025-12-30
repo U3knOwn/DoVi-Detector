@@ -845,10 +845,6 @@ tbody tr:hover {
 }
 
 @media screen and (max-height: 768px) and (orientation: landscape) {
-    body {
-        padding: 5px;
-    }
-
     h1 {
         font-size: 1.5em;
     }
