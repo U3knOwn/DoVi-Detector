@@ -878,13 +878,13 @@ def get_video_resolution(video_file):
 
                 # Map resolution to friendly names
                 if width == 3840 and height == 2160:
-                    return "2160p"
+                    return "4K (UHD)"
                 elif width == 1920 and height == 1080:
-                    return "1080p"
+                    return "1080p (Full HD)"
                 elif width == 1280 and height == 720:
-                    return "720p"
+                    return "720p (HD)"
                 elif width == 7680 and height == 4320:
-                    return "4320p"
+                    return "8K (UHD)"
                 elif width == 2560 and height == 1440:
                     return "1440p"
                 elif width == 4096 and height == 2160:
@@ -892,9 +892,9 @@ def get_video_resolution(video_file):
                 elif width == 1366 and height == 768:
                     return "768p"
                 elif width == 854 and height == 480:
-                    return "480p"
+                    return "480p (SD)"
                 elif width == 640 and height == 480:
-                    return "480p"
+                    return "480p (SD)"
                 else:
                     return f"{width}x{height}"
     except Exception as e:
@@ -910,9 +910,13 @@ def get_channel_format(channels):
             1: "1.0",
             2: "2.0",
             3: "2.1",
+            4: "3.1",
+            5: "4.1",
             6: "5.1",
             7: "6.1",
-            8: "7.1"
+            8: "7.1",
+            9: "8.1",
+            10: "9.1"
         }
         return channel_map.get(channels, f"{channels}.0")
     except (ValueError, TypeError):
