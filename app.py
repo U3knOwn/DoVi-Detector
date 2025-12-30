@@ -211,10 +211,10 @@ def delete_cached_poster(file_info):
     poster_url = file_info.get('poster_url', '')
     if poster_url.startswith('/poster/'):
         poster_filename = poster_url.replace('/poster/', '')
-        poster_path = os.path.join(POSTER_CACHE_DIR, poster_filename)
-        if os.path.exists(poster_path):
+        backdrop_path = os.path.join(POSTER_CACHE_DIR, poster_filename)
+        if os.path.exists(backdrop_path):
             try:
-                os.remove(poster_path)
+                os.remove(backdrop_path)
                 print(f"✗ Removed cached poster: {poster_filename}")
             except Exception as e:
                 print(f"Error removing poster {poster_filename}: {e}")
@@ -256,25 +256,25 @@ def get_tmdb_poster_by_id(tmdb_id, media_type='movie'):
         
         if response.status_code == 200:
             data = response.json()
-            poster_path = data.get('poster_path')
+            backdrop_path = data.get('backdrop_path')
 
-            if poster_path:
+            if backdrop_path:
                 title, year = extract_title_and_year_from_tmdb(data, media_type)
-                poster_url = f'https://image.tmdb.org/t/p/original{poster_path}'
+                poster_url = f'https://image.tmdb.org/t/p/original{backdrop_path}'
                 return poster_url, title, year
         
         # If German request failed or didn't have poster, try English
-        if response.status_code != 200 or not data.get('poster_path'):
+        if response.status_code != 200 or not data.get('backdrop_path'):
             params = {'api_key': TMDB_API_KEY, 'language': 'en'}
             response = requests.get(url, params=params, timeout=10)
             
             if response.status_code == 200:
                 data = response.json()
-                poster_path = data.get('poster_path')
+                backdrop_path = data.get('backdrop_path')
                 
-                if poster_path:
+                if backdrop_path:
                     title, year = extract_title_and_year_from_tmdb(data, media_type)
-                    poster_url = f'https://image.tmdb.org/t/p/original{poster_path}'
+                    poster_url = f'https://image.tmdb.org/t/p/original{backdrop_path}'
                     return poster_url, title, year
         
         if response.status_code not in [200, 404]:
@@ -323,15 +323,15 @@ def search_tmdb_poster(movie_name, media_type='movie'):
             if results:
                 # Get first result
                 first_result = results[0]
-                poster_path = first_result.get('poster_path')
+                backdrop_path = first_result.get('backdrop_path')
 
-                if poster_path:
+                if backdrop_path:
                     title, year = extract_title_and_year_from_tmdb(first_result, media_type)
-                    poster_url = f'https://image.tmdb.org/t/p/original{poster_path}'
+                    poster_url = f'https://image.tmdb.org/t/p/original{backdrop_path}'
                     return poster_url, title, year
         
         # If German search failed or returned no results with posters, try English
-        if response.status_code != 200 or not results or not results[0].get('poster_path'):
+        if response.status_code != 200 or not results or not results[0].get('backdrop_path'):
             params = {
                 'api_key': TMDB_API_KEY,
                 'query': movie_name,
@@ -344,11 +344,11 @@ def search_tmdb_poster(movie_name, media_type='movie'):
                 results = data.get('results', [])
                 if results:
                     first_result = results[0]
-                    poster_path = first_result.get('poster_path')
+                    backdrop_path = first_result.get('backdrop_path')
                     
-                    if poster_path:
+                    if backdrop_path:
                         title, year = extract_title_and_year_from_tmdb(first_result, media_type)
-                        poster_url = f'https://image.tmdb.org/t/p/original{poster_path}'
+                        poster_url = f'https://image.tmdb.org/t/p/original{backdrop_path}'
                         return poster_url, title, year
         
         if response.status_code not in [200, 404]:
@@ -463,7 +463,7 @@ def download_and_cache_poster(poster_url, cache_filename):
     return poster_url
 
 
-def get_cached_poster_path(tmdb_id, poster_url):
+def get_cached_backdrop_path(tmdb_id, poster_url):
     """Get cached poster path or download and cache it"""
     if not poster_url:
         return None
@@ -513,7 +513,7 @@ def migrate_poster_urls_to_cache():
                 print(
                     f"  [MIGRATION] Caching poster for: "
                     f"{file_info.get('filename')}")
-                cached_path = get_cached_poster_path(tmdb_id, poster_url)
+                cached_path = get_cached_backdrop_path(tmdb_id, poster_url)
                 if cached_path and cached_path.startswith('/poster/'):
                     file_info['poster_url'] = cached_path
                     migrated_count += 1
@@ -1158,9 +1158,9 @@ def scan_video_file(file_path):
     tmdb_id, poster_url, tmdb_title, tmdb_year = get_tmdb_poster(filename)
 
     # Cache the poster if we got a URL
-    cached_poster_path = None
+    cached_backdrop_path = None
     if poster_url:
-        cached_poster_path = get_cached_poster_path(tmdb_id, poster_url)
+        cached_backdrop_path = get_cached_backdrop_path(tmdb_id, poster_url)
 
     file_info = {
         'filename': filename,
@@ -1172,7 +1172,7 @@ def scan_video_file(file_path):
         'resolution': resolution,
         'audio_codec': audio_codec,
         'tmdb_id': tmdb_id,
-        'poster_url': cached_poster_path if cached_poster_path else poster_url,
+        'poster_url': cached_backdrop_path if cached_backdrop_path else poster_url,
         'tmdb_title': tmdb_title,
         'tmdb_year': tmdb_year
     }
@@ -1435,16 +1435,16 @@ def serve_poster(filename):
             print(f"Path traversal attempt detected: {filename}")
             return "Invalid filename", 400
 
-        poster_path = os.path.join(POSTER_CACHE_DIR, filename)
+        backdrop_path = os.path.join(POSTER_CACHE_DIR, filename)
 
         # Verify the resolved path is still within POSTER_CACHE_DIR
-        if not os.path.abspath(poster_path).startswith(
+        if not os.path.abspath(backdrop_path).startswith(
                 os.path.abspath(POSTER_CACHE_DIR)):
             print(f"Path traversal attempt detected: {filename}")
             return "Invalid filename", 400
 
-        if os.path.exists(poster_path):
-            return send_file(poster_path, mimetype='image/jpeg')
+        if os.path.exists(backdrop_path):
+            return send_file(backdrop_path, mimetype='image/jpeg')
         else:
             return "Poster not found", 404
     except Exception as e:
