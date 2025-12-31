@@ -23,8 +23,8 @@ Universal Video Scanner with Web Interface - Automatic detection of HDR formats 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/U3knOwn/DoVi-Detector.git
-cd DoVi-Detector
+git clone https://github.com/U3knOwn/universal-video-scanner.git
+cd universal-video-scanner
 ```
 
 2. Create media directory:
