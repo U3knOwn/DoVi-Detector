@@ -1112,6 +1112,9 @@ def get_audio_codec(video_file):
 
             if language in preferred_lang_codes:
                 preferred_track = track
+                # If preferred language is English, also set english_track
+                if language in english_lang_codes:
+                    english_track = track
                 break
             
             if english_track is None and language in english_lang_codes:
@@ -1231,6 +1234,9 @@ def get_audio_codec(video_file):
 
                     if language in preferred_lang_codes:
                         preferred_stream = stream
+                        # If preferred language is English, also set english_stream
+                        if language in english_lang_codes:
+                            english_stream = stream
                         break
                     
                     if english_stream is None and language in english_lang_codes:
