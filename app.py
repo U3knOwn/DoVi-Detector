@@ -31,6 +31,7 @@ POSTER_CACHE_DIR = os.path.join(DATA_DIR, 'posters')
 TMDB_API_KEY = os.environ.get('TMDB_API_KEY', '')
 FANART_API_KEY = os.environ.get('FANART_API_KEY', '')
 IMAGE_SOURCE = os.environ.get('IMAGE_SOURCE', 'tmdb').lower()
+CONTENT_LANGUAGE = os.environ.get('CONTENT_LANGUAGE', 'en').lower()
 
 # Compiled regex patterns for better performance
 TMDB_ID_PATTERN = re.compile(r'\{tmdb-(\d+)\}', re.IGNORECASE)
@@ -252,8 +253,12 @@ def get_tmdb_poster_by_id(tmdb_id, media_type='movie'):
     try:
         url = f'https://api.themoviedb.org/3/{media_type}/{tmdb_id}'
         
-        # Try German first
-        params = {'api_key': TMDB_API_KEY, 'language': 'de'}
+        # Determine primary and fallback languages based on CONTENT_LANGUAGE
+        primary_lang = CONTENT_LANGUAGE if CONTENT_LANGUAGE in ['en', 'de'] else 'en'
+        fallback_lang = 'de' if primary_lang == 'en' else 'en'
+        
+        # Try primary language first
+        params = {'api_key': TMDB_API_KEY, 'language': primary_lang}
         response = requests.get(url, params=params, timeout=10)
         
         if response.status_code == 200:
@@ -265,9 +270,9 @@ def get_tmdb_poster_by_id(tmdb_id, media_type='movie'):
                 poster_url = f'https://image.tmdb.org/t/p/original{backdrop_path}'
                 return poster_url, title, year
         
-        # If German request failed or didn't have poster, try English
+        # If primary language request failed or didn't have poster, try fallback
         if response.status_code != 200 or not data.get('backdrop_path'):
-            params = {'api_key': TMDB_API_KEY, 'language': 'en'}
+            params = {'api_key': TMDB_API_KEY, 'language': fallback_lang}
             response = requests.get(url, params=params, timeout=10)
             
             if response.status_code == 200:
@@ -311,11 +316,15 @@ def search_tmdb_poster(movie_name, media_type='movie'):
     try:
         url = f'https://api.themoviedb.org/3/search/{media_type}'
         
-        # Try German first
+        # Determine primary and fallback languages based on CONTENT_LANGUAGE
+        primary_lang = CONTENT_LANGUAGE if CONTENT_LANGUAGE in ['en', 'de'] else 'en'
+        fallback_lang = 'de' if primary_lang == 'en' else 'en'
+        
+        # Try primary language first
         params = {
             'api_key': TMDB_API_KEY,
             'query': movie_name,
-            'language': 'de'
+            'language': primary_lang
         }
 
         response = requests.get(url, params=params, timeout=10)
@@ -332,12 +341,12 @@ def search_tmdb_poster(movie_name, media_type='movie'):
                     poster_url = f'https://image.tmdb.org/t/p/original{backdrop_path}'
                     return poster_url, title, year
         
-        # If German search failed or returned no results with posters, try English
+        # If primary language search failed or returned no results with posters, try fallback
         if response.status_code != 200 or not results or not results[0].get('backdrop_path'):
             params = {
                 'api_key': TMDB_API_KEY,
                 'query': movie_name,
-                'language': 'en'
+                'language': fallback_lang
             }
             
             response = requests.get(url, params=params, timeout=10)
@@ -1058,13 +1067,19 @@ def get_audio_info_mediainfo(video_file):
 
 
 def get_audio_codec(video_file):
-    """Get audio codec with detailed profile info, preferring German (ger/deu) tracks"""
+    """Get audio codec with detailed profile info, preferring configured language tracks"""
     # Try MediaInfo first for better format detection (especially Atmos and
     # DTS:X)
     audio_tracks = get_audio_info_mediainfo(video_file)
     if audio_tracks:
-        # Try to find German audio track first
-        german_track = None
+        # Determine preferred language codes based on CONTENT_LANGUAGE
+        if CONTENT_LANGUAGE == 'de':
+            preferred_langs = ['ger', 'deu', 'de', 'german']
+        else:  # Default to English
+            preferred_langs = ['eng', 'en', 'english']
+        
+        # Try to find preferred language audio track first
+        preferred_track = None
         first_track = None
 
         for track in audio_tracks:
@@ -1073,12 +1088,12 @@ def get_audio_codec(video_file):
             if first_track is None:
                 first_track = track
 
-            if language in ['ger', 'deu', 'de', 'german']:
-                german_track = track
+            if language in preferred_langs:
+                preferred_track = track
                 break
 
-        # Use German track if found, otherwise first track
-        selected_track = german_track if german_track else first_track
+        # Use preferred language track if found, otherwise first track
+        selected_track = preferred_track if preferred_track else first_track
 
         if selected_track:
             # Extract format information from MediaInfo
@@ -1177,8 +1192,14 @@ def get_audio_codec(video_file):
         if result.returncode == 0:
             data = json.loads(result.stdout)
             if 'streams' in data and len(data['streams']) > 0:
-                # Try to find German audio track first
-                german_stream = None
+                # Determine preferred language codes based on CONTENT_LANGUAGE
+                if CONTENT_LANGUAGE == 'de':
+                    preferred_langs = ['ger', 'deu', 'de']
+                else:  # Default to English
+                    preferred_langs = ['eng', 'en']
+                
+                # Try to find preferred language audio track first
+                preferred_stream = None
                 first_stream = None
 
                 for stream in data['streams']:
@@ -1188,12 +1209,12 @@ def get_audio_codec(video_file):
                     if first_stream is None:
                         first_stream = stream
 
-                    if language in ['ger', 'deu', 'de']:
-                        german_stream = stream
+                    if language in preferred_langs:
+                        preferred_stream = stream
                         break
 
-                # Use German track if found, otherwise first track
-                selected_stream = german_stream if german_stream else first_stream
+                # Use preferred language track if found, otherwise first track
+                selected_stream = preferred_stream if preferred_stream else first_stream
 
                 codec_name = selected_stream.get('codec_name', 'Unknown')
                 profile = selected_stream.get('profile', '').lower()
@@ -1595,6 +1616,7 @@ def main():
 
     # Migrate existing poster URLs to cached versions
     if REQUESTS_AVAILABLE:
+        print(f"Content language: {CONTENT_LANGUAGE.upper()}")
         print(f"Image source: {IMAGE_SOURCE.upper()}")
         if IMAGE_SOURCE == 'fanart':
             if FANART_API_KEY:

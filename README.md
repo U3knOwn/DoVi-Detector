@@ -125,6 +125,7 @@ DoVi-Detector/
 | `TMDB_API_KEY` | `` | TMDB API key for fetching movie posters (optional) |
 | `FANART_API_KEY` | `` | Fanart.tv API key for fetching thumb posters (optional) |
 | `IMAGE_SOURCE` | `tmdb` | Image source selection: `tmdb` (default) or `fanart` |
+| `CONTENT_LANGUAGE` | `en` | Content language for TMDB/Fanart.tv metadata and preferred audio track: `en` (English) or `de` (German) |
 
 ### TMDB API Integration (Optional)
 
@@ -189,6 +190,30 @@ IMAGE_SOURCE=fanart
 
 **Without Fanart.tv API Key:**
 - The app will still work normally with TMDB or displaying filenames
+
+### Language Configuration
+
+To configure the content language for metadata and audio track preference:
+
+```yaml
+environment:
+  - CONTENT_LANGUAGE=de  # Use German metadata and prefer German audio
+```
+
+**Supported values:**
+- `en` (default) - English metadata from TMDB, prefer English audio tracks
+- `de` - German metadata from TMDB, prefer German audio tracks
+
+This setting affects:
+- Movie/TV show titles and metadata from TMDB
+- Preferred audio track selection/display
+- All content queries to TMDB and Fanart.tv
+
+**How it works:**
+- The configured language is tried first, with the other language as fallback
+- Audio tracks in the configured language are preferred when displaying codec information
+- If `CONTENT_LANGUAGE=en`: English metadata is fetched first, then German as fallback; English audio tracks are preferred
+- If `CONTENT_LANGUAGE=de`: German metadata is fetched first, then English as fallback; German audio tracks are preferred
 
 ## Docker Compose Options 🐳
 
