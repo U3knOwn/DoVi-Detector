@@ -659,10 +659,13 @@ function formatFileSize(bytes) {
     if (bytes === null || bytes === undefined || bytes < 0) return 'Unknown';
     
     // Always convert to GB
-    const sizeInGB = bytes / (1024 * 1024 * 1024);
+    const GB_IN_BYTES = 1024 * 1024 * 1024;
+    const sizeInGB = bytes / GB_IN_BYTES;
     
-    // Format with 1 decimal place and use comma as decimal separator (German format)
-    const formattedSize = sizeInGB.toFixed(1).replace('.', ',');
+    // Format with 1 decimal place and use appropriate decimal separator based on locale
+    const formattedSize = currentLang === 'de' 
+        ? sizeInGB.toFixed(1).replace('.', ',')  // German: comma
+        : sizeInGB.toFixed(1);                    // English: period
     return `${formattedSize} GB`;
 }
 
