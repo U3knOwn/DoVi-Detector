@@ -711,8 +711,22 @@ function showMediaDialog(title, year, duration, videoBitrate, audioBitrate, tmdb
     // Apply translations
     applyTranslations();
     
-    // Setup swipe gesture for mobile
-    setupSwipeToClose();
+    // Setup swipe gesture for mobile (only once)
+    if (!swipeListenersAttached) {
+        setupSwipeToClose();
+    }
+}
+
+function showMediaDialogFromData(element) {
+    // Extract data attributes safely from the clicked element
+    const title = element.getAttribute('data-title') || '';
+    const year = element.getAttribute('data-year') || '';
+    const duration = parseFloat(element.getAttribute('data-duration')) || null;
+    const videoBitrate = parseInt(element.getAttribute('data-video-bitrate')) || null;
+    const audioBitrate = parseInt(element.getAttribute('data-audio-bitrate')) || null;
+    const tmdbId = element.getAttribute('data-tmdb-id') || '';
+    
+    showMediaDialog(title, year, duration, videoBitrate, audioBitrate, tmdbId);
 }
 
 function closeMediaDialog(event) {

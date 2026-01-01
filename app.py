@@ -1271,7 +1271,7 @@ def get_audio_bitrate(video_file):
 def get_audio_codec(video_file):
     """Get audio codec with detailed profile info, preferring configured language tracks"""
     # Get language codes for the configured language and English fallback
-    preferred_lang_codes = LANGUAGE_CODE_MAP.get(CONTENT_LANGUAGE, [CONTENT_LANGUAGE])
+    preferred_lang_codes = LANGUAGE_CODE_MAP.get(CONTENT_LANGUAGE, [CONTENT_LANGUAGE.lower()])
     english_lang_codes = LANGUAGE_CODE_MAP.get('en', ['eng', 'en', 'english'])
     
     # Try MediaInfo first for better format detection (especially Atmos and

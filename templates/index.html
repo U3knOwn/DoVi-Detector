@@ -70,7 +70,14 @@
                 <tr data-hdr-format="{{ file.hdr_format }}" data-hdr-detail="{{ file.hdr_detail }}" data-el-type="{{ file.el_type or '' }}">
                     <td data-label-i18n="table_header_poster" data-label="Poster / Dateiname" title="{{ file.filename }}">
                         {% if file.poster_url %}
-                        <div class="poster-container" onclick="showMediaDialog('{{ file.tmdb_title|default(file.filename)|replace("'", "\\'") }}', '{{ file.tmdb_year|default('') }}', {{ file.duration|default('null') }}, {{ file.video_bitrate|default('null') }}, {{ file.audio_bitrate|default('null') }}, '{{ file.tmdb_id|default('') }}')">
+                        <div class="poster-container" 
+                             data-title="{{ file.tmdb_title|default(file.filename) }}" 
+                             data-year="{{ file.tmdb_year|default('') }}"
+                             data-duration="{{ file.duration|default('') }}"
+                             data-video-bitrate="{{ file.video_bitrate|default('') }}"
+                             data-audio-bitrate="{{ file.audio_bitrate|default('') }}"
+                             data-tmdb-id="{{ file.tmdb_id|default('') }}"
+                             onclick="showMediaDialogFromData(this)">
                             {% if file.tmdb_title %}
                             <span class="poster-title">
                                 {{ file.tmdb_title }}{% if file.tmdb_year %} ({{ file.tmdb_year }}){% endif %}
@@ -79,7 +86,14 @@
                             <img src="{{ file.poster_url }}" alt="{{ file.filename }}" class="poster-img" loading="lazy">
                         </div>
                         {% else %}
-                        <span class="filename-fallback" onclick="showMediaDialog('{{ file.filename|replace("'", "\\'") }}', '', {{ file.duration|default('null') }}, {{ file.video_bitrate|default('null') }}, {{ file.audio_bitrate|default('null') }}, '{{ file.tmdb_id|default('') }}')">{{ file.filename }}</span>
+                        <span class="filename-fallback"
+                              data-title="{{ file.filename }}"
+                              data-year=""
+                              data-duration="{{ file.duration|default('') }}"
+                              data-video-bitrate="{{ file.video_bitrate|default('') }}"
+                              data-audio-bitrate="{{ file.audio_bitrate|default('') }}"
+                              data-tmdb-id="{{ file.tmdb_id|default('') }}"
+                              onclick="showMediaDialogFromData(this)">{{ file.filename }}</span>
                         {% endif %}
                     </td>
 
