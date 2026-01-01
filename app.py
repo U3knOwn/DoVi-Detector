@@ -35,16 +35,30 @@ CONTENT_LANGUAGE = os.environ.get('CONTENT_LANGUAGE', 'en').lower()
 
 # Helper functions for language configuration
 def get_tmdb_languages():
-    """Get primary and fallback languages for TMDB API calls based on CONTENT_LANGUAGE"""
+    """Get primary and fallback languages for TMDB API calls based on CONTENT_LANGUAGE
+    
+    Returns:
+        tuple: (primary_lang, fallback_lang)
+        - If CONTENT_LANGUAGE is 'de': returns ('de', 'en')
+        - If CONTENT_LANGUAGE is 'en' or invalid: returns ('en', 'de')
+    
+    Note: Invalid language values default to 'en' behavior for graceful degradation.
+    """
     primary_lang = CONTENT_LANGUAGE if CONTENT_LANGUAGE in ['en', 'de'] else 'en'
     fallback_lang = 'de' if primary_lang == 'en' else 'en'
     return primary_lang, fallback_lang
 
 def get_preferred_audio_languages():
-    """Get list of preferred audio language codes based on CONTENT_LANGUAGE"""
+    """Get list of preferred audio language codes based on CONTENT_LANGUAGE
+    
+    Returns:
+        list: Language codes to prioritize when selecting audio tracks
+        - If CONTENT_LANGUAGE is 'de': returns German language codes
+        - Otherwise: returns English language codes (default)
+    """
     if CONTENT_LANGUAGE == 'de':
         return ['ger', 'deu', 'de', 'german']
-    else:  # Default to English
+    else:  # Default to English (including invalid values)
         return ['eng', 'en', 'english']
 
 # Compiled regex patterns for better performance
