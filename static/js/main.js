@@ -616,22 +616,22 @@ function sortTableByAudio() {
 }
 
 function sortTableByRating() {
-    sortTableByNumericAttribute('data-tmdb-rating', true);
+    sortTableByNumericAttribute('data-tmdb-rating');
 }
 
 function sortTableByFileSize() {
-    sortTableByNumericAttribute('data-file-size', true);
+    sortTableByNumericAttribute('data-file-size');
 }
 
 function sortTableByVideoBitrate() {
-    sortTableByNumericAttribute('data-video-bitrate', true);
+    sortTableByNumericAttribute('data-video-bitrate');
 }
 
 function sortTableByAudioBitrate() {
-    sortTableByNumericAttribute('data-audio-bitrate', true);
+    sortTableByNumericAttribute('data-audio-bitrate');
 }
 
-function sortTableByNumericAttribute(attribute, descending = true) {
+function sortTableByNumericAttribute(attribute) {
     const table = document.getElementById('mediaTable');
     if (!table) return;
     const tbody = table.querySelector('tbody');
@@ -641,9 +641,8 @@ function sortTableByNumericAttribute(attribute, descending = true) {
         const aValue = parseFloat(a.getAttribute(attribute)) || 0;
         const bValue = parseFloat(b.getAttribute(attribute)) || 0;
         
-        // Sort by value (descending or ascending)
-        let comparison = descending ? bValue - aValue : aValue - bValue;
-        if (comparison !== 0) return comparison;
+        // Sort descending (highest/largest first)
+        if (bValue !== aValue) return bValue - aValue;
         
         // If same value, sort secondarily by filename
         const aName = getFilenameFromRow(a).toLowerCase();
