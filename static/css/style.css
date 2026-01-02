@@ -962,7 +962,6 @@ tbody tr:hover {
     to { transform: rotate(360deg); }
 }
 
-/* Footer Styles */
 .site-footer {
     display: flex;
     justify-content: center;
