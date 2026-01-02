@@ -9,16 +9,14 @@ RUN apt-get update && apt-get install -y \
     mediainfo \
     python3 \
     python3-pip \
-    wget \
-    unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install dovi_tool
-RUN wget https://github.com/quietvoid/dovi_tool/releases/download/2.3.1/dovi_tool-2.3.1-x86_64-unknown-linux-musl.tar.gz \
-    && tar -xzf dovi_tool-2.3.1-x86_64-unknown-linux-musl.tar.gz \
-    && mv dovi_tool /usr/local/bin/ \
+# Copy and install dovi_tool from local files
+COPY files/dovi_tool-2.3.1-x86_64-unknown-linux-musl.tar.gz /tmp/
+RUN tar -xzf /tmp/dovi_tool-2.3.1-x86_64-unknown-linux-musl.tar.gz -C /tmp/ \
+    && mv /tmp/dovi_tool /usr/local/bin/ \
     && chmod +x /usr/local/bin/dovi_tool \
-    && rm dovi_tool-2.3.1-x86_64-unknown-linux-musl.tar.gz
+    && rm /tmp/dovi_tool-2.3.1-x86_64-unknown-linux-musl.tar.gz
 
 # Set working directory
 WORKDIR /app
