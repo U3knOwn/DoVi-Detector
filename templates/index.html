@@ -106,9 +106,9 @@
                             <div class="poster-img-wrapper">
                                 <img src="{{ file.poster_url }}" alt="{{ file.filename }}" class="poster-img" loading="lazy">
                                 {% if file.tmdb_rating %}
-                                <div class="imdb-badge">
-                                    <span class="imdb-logo">★</span>
-                                    <span class="imdb-rating">{{ "%.1f"|format(file.tmdb_rating) }}</span>
+                                <div class="tmdb-badge">
+                                    <span class="tmdb-logo">★</span>
+                                    <span class="tmdb-rating">{{ "%.1f"|format(file.tmdb_rating) }}</span>
                                 </div>
                                 {% endif %}
                             </div>
