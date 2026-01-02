@@ -17,7 +17,7 @@ except ImportError:
 def delete_cached_poster(file_info, poster_cache_dir):
     """Delete cached poster file for a given file_info entry"""
     poster_url = file_info.get('poster_url', '')
-    if poster_url.startswith('/poster/'):
+    if poster_url and poster_url.startswith('/poster/'):
         poster_filename = poster_url.replace('/poster/', '')
         backdrop_path = os.path.join(poster_cache_dir, poster_filename)
         if os.path.exists(backdrop_path):
