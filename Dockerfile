@@ -35,8 +35,8 @@ COPY utils/ ./utils/
 COPY watchers/ ./watchers/
 
 # Copy static and templates folders to /data/app
-COPY static ./static
-COPY templates ./templates
+COPY static/ ./static/
+COPY templates/ ./templates/
 
 # Set permissions for static and templates folders
 RUN chmod -R 755 ./static ./templates
