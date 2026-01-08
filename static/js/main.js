@@ -1067,7 +1067,7 @@ function showMediaDialog(title, year, duration, videoBitrate, audioBitrate, file
         dialogPoster.style.display = 'block';
         
         // Set filename if available
-        if (dialogFilenameItem && dialogFilename && filename) {
+        if (dialogFilenameItem && dialogFilename && filename && filename.trim() !== '') {
             dialogFilename.textContent = filename;
             dialogFilenameItem.style.display = 'flex';
         } else if (dialogFilenameItem) {
