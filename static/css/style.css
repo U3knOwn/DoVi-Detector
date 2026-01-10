@@ -274,7 +274,7 @@ tbody tr:hover {
 .audio-badge {
     display: inline-block;
     text-align: center;
-    width: 175px;
+    width: 200px;
     padding: 10px;
     border-radius: 8px;
     font-weight: bold;
@@ -287,7 +287,7 @@ tbody tr:hover {
 }
 
 .hdr-dolby-vision.el-fel {
-    background: linear-gradient(135deg, #06b6d4 0%, #1283c7 100%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
 }
 
@@ -302,12 +302,12 @@ tbody tr:hover {
 }
 
 .hdr-hdr10 {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, #06b6d4 0%, #1283c7 100%);
     color: white;
 }
 
 .hdr-hlg {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, #06b6d4 0%, #1283c7 100%);
     color: white;
 }
 
@@ -332,42 +332,42 @@ tbody tr:hover {
 }
 
 .resolution-8k-\(uhd\) {
-    background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .resolution-4k-\(uhd\) {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .resolution-1440p {
-    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .resolution-1080p-\(full-hd\) {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .resolution-720p-\(hd\) {
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .resolution-480p-\(sd\) {
-    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .resolution-768p {
-    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .resolution-4k-dci {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
@@ -377,17 +377,17 @@ tbody tr:hover {
 }
 
 .audio-truehd-atmos {
-    background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .audio-dtsx {
-    background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .audio-truehd {
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
@@ -397,37 +397,37 @@ tbody tr:hover {
 }
 
 .audio-dts-hd-hra {
-    background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .audio-ddplus-atmos {
-    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .audio-ddplus {
-    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .audio-dolby-digital {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .audio-dts {
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .audio-aac {
-    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .audio-lossless {
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
@@ -512,16 +512,16 @@ tbody tr:hover {
 
 .tmdb-badge {
     position: absolute;
-    top: 8px;
-    right: 8px;
-	background: linear-gradient(135deg, rgba(144, 206, 161, 0.25), rgba(1, 180, 228, 0.25)), rgba(0, 0, 0, 0.66);
+    top: 4px;
+    right: 4px;
+	background: linear-gradient(135deg, rgba(144, 206, 161, 0.25), rgba(0, 39, 49, 0.25)), rgba(0, 0, 0, 0.66);
 	backdrop-filter: blur(6px);
 	-webkit-backdrop-filter: blur(6px);
 	color: #fff;
     padding: 4px 8px;
     border-radius: 6px;
     font-weight: bold;
-    font-size: 0.85em;
+    font-size: 0.75em;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -651,9 +651,9 @@ tbody tr:hover {
 
 .dialog-plot-text {
     color: #ccc;
-    line-height: 1.2;
+    line-height: 1.4;
     text-align: center;
-    font-size: 0.9em;
+    font-size: 0.8em;
     font-weight: bold;
 }
 
@@ -674,8 +674,8 @@ tbody tr:hover {
 .dialog-label {
     color: #e5e5e5;
     text-transform: uppercase;
-    font-size: 1em;
-    letter-spacing: 1px;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
     font-weight: 600;
 }
 
@@ -683,6 +683,7 @@ tbody tr:hover {
     color: #ccc;
     font-size: 0.9em;
     font-weight: bold;
+    line-height: 1.4;
 }
 
 .dialog-filename-item .dialog-value {
